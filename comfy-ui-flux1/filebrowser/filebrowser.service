@@ -1,0 +1,14 @@
+[Unit]
+Description=Filebrowser Server
+After=syslog.target network.target
+
+[Service]
+WorkingDirectory=/workspace/filebrowser
+ExecStart=/workspace/filebrowser -a 0.0.0.0 --config /workspace/filebrowser/config.json -d /workspace/filebrowser/filebrowser.db -p 8090 -r /workspace
+Restart=on-failure
+Type=simple
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

@@ -10,7 +10,7 @@ today_tag = datetime.datetime.now().strftime("%d%m%Y")
 # Creating argparse parser
 parser = argparse.ArgumentParser(description="Build Dockerfile")
 parser.add_argument('docker', type=str, help='Name of the Dockerfile to build - should match a folder name in this repo')
-parser.add_argument('--username', type=str, default="valyriantech", help=f"Tag to use. Defaults to today's date: valyriantech")
+parser.add_argument('--username', type=str, default="darionr3", help=f"Tag to use. Defaults to today's date: darionr3")
 parser.add_argument('--tag', type=str, default=today_tag, help=f"Tag to use. Defaults to today's date: {today_tag}")
 parser.add_argument('--latest', action="store_true", help='If specified, we will also tag and push :latest')
 args = parser.parse_args()
@@ -41,7 +41,7 @@ def build(docker_repo, tag, from_docker=None):
     if from_docker is not None:
         docker_build_arg += f" --build-arg DOCKER_FROM={from_docker}"
 
-    build_command = f"docker build {docker_build_arg} {dockerLLM_dir}/{docker_repo}"
+    build_command = f"docker build --platform linux/amd64 {docker_build_arg} {dockerLLM_dir}/{docker_repo}"
     push_command = f"docker push {docker_container}"
 
     docker_command(build_command)

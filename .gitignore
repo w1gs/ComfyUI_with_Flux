@@ -1,1 +1,5 @@
 .idea
+*.cache
+comfy-ui-flux1/flux
+comfy-ui-flux1/filebrowser/filebrowser.db
+comfy-ui-flux1/filebrowser/config.json
