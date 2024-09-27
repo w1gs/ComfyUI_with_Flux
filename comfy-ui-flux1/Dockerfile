@@ -4,19 +4,18 @@ ARG UBUNTU_VERSION="22.04"
 ARG DOCKER_FROM=nvidia/cuda:$CUDA_VERSION-cudnn$CUDNN_VERSION-devel-ubuntu$UBUNTU_VERSION
 
 # Base NVidia CUDA Ubuntu image
-FROM $DOCKER_FROM AS base
+FROM $DOCKER_FROM
 
 # Install Python plus openssh, which is our minimum set of required packages.
 RUN apt-get update -y && \
     apt-get install -y python3 python3-pip python3-venv && \
-    apt-get install -y --no-install-recommends openssh-server openssh-client git git-lfs wget neovim file ffmpeg libsm6 libxext6 tmux net-tools && \
+    apt-get install -y --no-install-recommends openssh-server openssh-client git git-lfs wget nano file ffmpeg libsm6 libxext6 tmux net-tools curl nginx && \
     python3 -m pip install --upgrade pip uv && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install nginx
-RUN apt-get update && \
-    apt-get install -y nginx
+RUN curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
+
 
 # Copy the 'default' configuration file to the appropriate location
 COPY default /etc/nginx/sites-available/default
@@ -32,10 +31,14 @@ COPY --chmod=755 start-ssh-only.sh /start.sh
 COPY --chmod=755 comfyui-on-workspace.sh /comfyui-on-workspace.sh
 
 # Clone the git repo and install requirements in the same RUN command to ensure they are in the same layer
-RUN git clone https://github.com/ostris/ai-toolkit.git && \
+RUN mkdir /opt/ai-toolkit && \
+    cd /opt/ai-toolkit && \
+    git submodule update --init --recursive 
+
+RUN git clone https://github.com/ostris/ai-toolkit.git /opt/ai-toolkit && \
     git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
-    pip install -r requirements.txt && \
+    pip3 install -r requirements.txt && \
     cd custom_nodes && \
     git clone https://github.com/ltdrdata/ComfyUI-Manager.git && \
     git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git && \
@@ -65,8 +68,6 @@ RUN wget -O /ComfyUI/models/clip/clip_l.safetensors "https://huggingface.co/comf
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY filebrowser/filebrowser /workspace/filebrowser
-COPY filebrowser/filebrowser.service /etc/systemd/system/filebrowser.service
 
 
 CMD [ "/start.sh" ]
