@@ -31,12 +31,12 @@ COPY --chmod=755 start-ssh-only.sh /start.sh
 COPY --chmod=755 comfyui-on-workspace.sh /comfyui-on-workspace.sh
 
 # Clone the git repo and install requirements in the same RUN command to ensure they are in the same layer
-RUN mkdir /opt/ai-toolkit && \
+RUN cd /opt/ && \
+    git clone https://github.com/ostris/ai-toolkit.git && \
     cd /opt/ai-toolkit && \
     git submodule update --init --recursive 
 
-RUN git clone https://github.com/ostris/ai-toolkit.git /opt/ai-toolkit && \
-    git clone https://github.com/comfyanonymous/ComfyUI.git && \
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     cd ComfyUI && \
     pip3 install -r requirements.txt && \
     cd custom_nodes && \
