@@ -7,9 +7,8 @@ ARG DOCKER_FROM=nvidia/cuda:$CUDA_VERSION-cudnn$CUDNN_VERSION-devel-ubuntu$UBUNT
 FROM $DOCKER_FROM
 
 # Install Python plus openssh, which is our minimum set of required packages.
-RUN apt-get update -y && \
-    apt-get install -y python3 python3-pip python3-venv && \
-    apt-get install -y --no-install-recommends openssh-server openssh-client git git-lfs wget nano file ffmpeg libsm6 libxext6 tmux net-tools curl nginx && \
+RUN apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-venv python-is-python3 openssh-server openssh-client git git-lfs wget nano file ffmpeg libsm6 libxext6 tmux net-tools curl nginx python3-tk && \
     python3 -m pip install --upgrade pip uv && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -44,7 +43,7 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git && \
     git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git && \
     cd /ComfyUI && \
     mkdir pysssss-workflows && \
-    mkdir /workspace/models
+    mkdir -p /opt/models/clip
 
 COPY --chmod=755 txt2img.json /ComfyUI/pysssss-workflows/txt2img.json
 COPY --chmod=755 img2img.json /ComfyUI/pysssss-workflows/img2img.json
@@ -57,13 +56,13 @@ EXPOSE 8188
 
 # Due to the fact that the models are in a gated repository, we need to download them separately BEFORE building this image and store them locally in a folder called flux
 # https://huggingface.co/black-forest-labs/FLUX.1-dev/blob/main/ae.safetensors
-COPY flux/ae.safetensors /workspace/models/
+COPY flux/ae.safetensors /opt/models/
 # https://huggingface.co/black-forest-labs/FLUX.1-dev/blob/main/flux1-dev.safetensors
-COPY flux/flux1-dev.safetensors /workspace/models/
+COPY flux/flux1-dev.safetensors /opt/models/
 
 # Download and move clip_l.safetensors
-RUN wget -O /workspace/models/clip/clip_l.safetensors "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors?download=true" && \
-    wget -O /workspace/models/clip/t5xxl_fp16.safetensors "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors" && \
+RUN wget -O /opt/models/clip/clip_l.safetensors "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors?download=true" && \
+    wget -O /opt/models/clip/t5xxl_fp16.safetensors "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors" && \
     rm -rf /etc/nginx/nginx.conf
 
 COPY nginx.conf /etc/nginx/nginx.conf
