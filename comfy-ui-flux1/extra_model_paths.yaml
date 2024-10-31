@@ -1,0 +1,9 @@
+comfyui:
+    base_path: /workspace/ComfyUI
+    # You can use is_default to mark that these folders should be listed first, and used as the default dirs for eg downloads
+    is_default: true
+    clip: /opt/models/clip/
+    diffusion_models: |
+                 /opt/models/unet
+    loras: /opt/models/loras/
+    vae: /opt/models/vae/

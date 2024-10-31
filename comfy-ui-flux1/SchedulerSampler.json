@@ -1,0 +1,148 @@
+{
+	"3": {
+		"inputs": {
+			"seed": 8,
+			"steps": 25,
+			"cfg": 6.5,
+			"sampler_name": "euler",
+			"scheduler": "normal",
+			"denoise": 1,
+			"model": ["24", 0],
+			"positive": ["24", 1],
+			"negative": ["24", 2],
+			"latent_image": ["24", 3]
+		},
+		"class_type": "KSampler",
+		"_meta": { "title": "KSampler (euler_normal)" }
+	},
+	"4": {
+		"inputs": { "ckpt_name": "dreamshaper_8.safetensors" },
+		"class_type": "CheckpointLoaderSimple",
+		"_meta": { "title": "Load Checkpoint" }
+	},
+	"5": {
+		"inputs": { "width": 512, "height": 512, "batch_size": 1 },
+		"class_type": "EmptyLatentImage",
+		"_meta": { "title": "Empty Latent Image" }
+	},
+	"6": {
+		"inputs": {
+			"text": "a photo of an anthropomorphic fox wearing a spacesuit inside a sci-fi spaceship\n\ncinematic, dramatic lighting, high resolution, detailed, 4k",
+			"clip": ["4", 1]
+		},
+		"class_type": "CLIPTextEncode",
+		"_meta": { "title": "CLIP Text Encode (Positive)" }
+	},
+	"7": {
+		"inputs": {
+			"text": "blurry, illustration, toy, clay, low quality, flag, nasa, mission patch",
+			"clip": ["4", 1]
+		},
+		"class_type": "CLIPTextEncode",
+		"_meta": { "title": "CLIP Text Encode (Negative)" }
+	},
+	"8": {
+		"inputs": { "samples": ["3", 0], "vae": ["15", 0] },
+		"class_type": "VAEDecode",
+		"_meta": { "title": "VAE Decode (euler_normal)" }
+	},
+	"15": {
+		"inputs": { "vae_name": "vae-ft-mse-840000-ema-pruned.safetensors" },
+		"class_type": "VAELoader",
+		"_meta": { "title": "Load VAE" }
+	},
+	"24": {
+		"inputs": {
+			"model": ["4", 0],
+			"clip": ["6", 0],
+			"clip2": ["7", 0],
+			"latent": ["5", 0]
+		},
+		"class_type": "Reroute",
+		"_meta": { "title": "Reroute" }
+	},
+	"25": {
+		"inputs": {
+			"seed": 8,
+			"steps": 25,
+			"cfg": 6.5,
+			"sampler_name": "euler",
+			"scheduler": "karras",
+			"denoise": 1,
+			"model": ["24", 0],
+			"positive": ["24", 1],
+			"negative": ["24", 2],
+			"latent_image": ["24", 3]
+		},
+		"class_type": "KSampler",
+		"_meta": { "title": "KSampler (euler_karras)" }
+	},
+	"26": {
+		"inputs": { "samples": ["25", 0], "vae": ["15", 0] },
+		"class_type": "VAEDecode",
+		"_meta": { "title": "VAE Decode (euler_karras)" }
+	},
+	"27": {
+		"inputs": {
+			"seed": 8,
+			"steps": 25,
+			"cfg": 6.5,
+			"sampler_name": "dpmpp_2m",
+			"scheduler": "normal",
+			"denoise": 1,
+			"model": ["24", 0],
+			"positive": ["24", 1],
+			"negative": ["24", 2],
+			"latent_image": ["24", 3]
+		},
+		"class_type": "KSampler",
+		"_meta": { "title": "KSampler (dpmpp_2m_normal)" }
+	},
+	"28": {
+		"inputs": { "samples": ["27", 0], "vae": ["15", 0] },
+		"class_type": "VAEDecode",
+		"_meta": { "title": "VAE Decode (dpmpp_2m_normal)" }
+	},
+	"29": {
+		"inputs": {
+			"seed": 8,
+			"steps": 25,
+			"cfg": 6.5,
+			"sampler_name": "dpmpp_2m",
+			"scheduler": "karras",
+			"denoise": 1,
+			"model": ["24", 0],
+			"positive": ["24", 1],
+			"negative": ["24", 2],
+			"latent_image": ["24", 3]
+		},
+		"class_type": "KSampler",
+		"_meta": { "title": "KSampler (dpmpp_2m_karras)" }
+	},
+	"30": {
+		"inputs": { "samples": ["29", 0], "vae": ["15", 0] },
+		"class_type": "VAEDecode",
+		"_meta": { "title": "VAE Decode (dpmpp_2m_karras)" }
+	},
+	"31": {
+		"inputs": {
+			"images": ["8", 0, "26", 0, "28", 0, "30", 0],
+			"labels": [
+				"euler_normal",
+				"euler_karras",
+				"dpmpp_2m_normal",
+				"dpmpp_2m_karras"
+			]
+		},
+		"class_type": "GridAnnotation",
+		"_meta": { "title": "Grid Annotation" }
+	},
+	"32": {
+		"inputs": {
+			"filename_prefix": "ComfyUI_samplers_schedulers",
+			"images": ["31", 0]
+		},
+		"class_type": "SaveImage",
+		"_meta": { "title": "Save Image" }
+	}
+}
