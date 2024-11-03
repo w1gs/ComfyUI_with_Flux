@@ -38,6 +38,7 @@ RUN pip3 install huggingface
 
 COPY --chmod=755 start-ssh-only.sh /start.sh
 COPY --chmod=755 comfyui-on-workspace.sh /comfyui-on-workspace.sh
+COPY --chmod=755 civit.sh /civit_downloader.sh
 
 # Clone the git repo and install requirements in the same RUN command to ensure they are in the same layer
 # RUN cd /opt/ && \

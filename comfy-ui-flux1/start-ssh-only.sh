@@ -23,6 +23,7 @@ huggingface-cli download --local-dir /opt/models/unet black-forest-labs/FLUX.1-d
 huggingface-cli download --local-dir /opt/models/vae/ae.safetensors black-forest-labs/FLUX.1-dev --include 'vae/diffusion_pytorch_model.safetensors'
 wget -O /opt/models/clip/clip_l.safetensors "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors?download=true"
 wget -O /opt/models/clip/t5xxl_fp16.safetensors "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
+rm -rf /etc/apt/sources.list.d/mega*
 # Launch the UI
 python3 /ComfyUI/main.py --listen --preview-method auto
 
